@@ -5,42 +5,47 @@ In the class we will be able to pass pre- & post- conditions to
  each scenario and each step
  */
 
-import io.cucumber.java.After;
-import io.cucumber.java.AfterStep;
-import io.cucumber.java.Before;
-import io.cucumber.java.BeforeStep;
+import com.cydeo.utilities.Driver;
+import io.cucumber.java.*;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 
 public class Hooks {
     //import from io.cucumber.java not from junit
-    @Before (order = 0)
-    public void setupScenario(){
-        System.out.println("====Setting up browser using cucumber @Before====");
+   @Before (order = 0)
+   public void setupScenario(){
+   //     System.out.println("====Setting up browser using cucumber @Before====");
     }
 
     @Before (value = "@login", order = 1)
     public void setupScenarioForLogins(){
-        System.out.println("====Setting up browser using cucumber @Before====");
+    //    System.out.println("====Setting up browser using cucumber @Before====");
     }
 
-    //@Before (value = "@db", order = 0)
+    @Before (value = "@db", order = 0)
     public void setupForDatabaseScenarios(){
-        System.out.println("====this will only apply to scenarios with @db tag");
+      //  System.out.println("====this will only apply to scenarios with @db tag");
     }
 
-    @After
-    public void teardownScenario(){
-        System.out.println("====Closing browser using cucumber @After====");
-    }
+   @After
+   public void teardownScenario(Scenario scenario){
+       if (scenario.isFailed()) {
 
-    @BeforeStep
+           byte[] screenshot = ((TakesScreenshot) Driver.getDriver()).getScreenshotAs(OutputType.BYTES);
+           scenario.attach(screenshot, "image/png", scenario.getName() );
+   }
+       Driver.closeDriver();
+
+  }
+
+   @BeforeStep
     public void setupStep(){
-        System.out.println("--Applying setup using @BeforeStep--");
 
     }
 
     @AfterStep
-    public void afterStep(){
-        System.out.println("--Applying teardown using @AfterStep--");
+   public void afterStep(){
+
     }
 
 
